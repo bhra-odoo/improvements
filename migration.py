@@ -37,13 +37,12 @@ def migrate(cr, version):
         ('cuenta173_01', 'cuenta183_01_01', 'cuenta614_01_01'),  # Deferred Expenses
     ]
 
-    all_base_xmlids = set(
-        acc_dep_xmlids + exp_dep_xmlids +
-        [m[0] for m in asset_mappings] +
-        [m[1] for m in asset_mappings] +
-        [m[2] for m in asset_mappings] +
-        ['asset_80_month_linear']
-    )
+    all_base_xmlids = {
+        'asset_80_month_linear',
+        *acc_dep_xmlids,
+        *exp_dep_xmlids,
+        *(xmlid for triple in asset_mappings for xmlid in triple),
+    }
 
     # 2. Fetch all needed ir.model.data records in one query
     target_names = [f"{company.id}_{xmlid}" for company in mx_companies for xmlid in all_base_xmlids]
